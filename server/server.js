@@ -33,9 +33,9 @@ io.on('connection', (socket)=>{
 
         io.to(params.room).emit('updateUsersList', users.getUserList(params.room));
 
-        socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'))
+        socket.emit('newMessage', generateMessage('Admin', `${params.name}, Welcome to the ChatApp`))
 
-        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', 'New User Joined'))
+        socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} Joined`))
 
         callback();
     })

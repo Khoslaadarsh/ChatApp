@@ -29,7 +29,7 @@
        <div class="active-users-panel" id="active-user-container">
          <h3 class="panel-title">Active Users:</h3>
          <div id="users">
-            
+
          </div>
        </div>
        <div class="video-chat-container">
@@ -76,12 +76,14 @@
    <script id="message-temp" type="text/template">
     <!-- <li class='message'> -->
         <div class='message__title'>
-            <h4><%= from %> <%= createdAt %>  </h4>
+            <h6><%= from %></h6>
             <!-- <h4>{{from}} {{createdAt}}</h4> -->
             <!-- <span>{{createdAt}}</span> -->
         </div>
         <div class="message__body">
-            <p><%= text %> </p>
+            <p><strong><%= text %> </strong></p>
+            <h6><em><%= createdAt %></em></h6>
+            <hr>
             <!-- <p>{{text}}</p> -->
         </div>
     <!-- </li> -->
