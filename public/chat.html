@@ -1,71 +1,110 @@
-<!doctype html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Socket.IO chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: 0.5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      /* #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; } */
-    </style>
-  </head>
-  <body>
-    <p>Welcome to the chat app</p>
+<link rel="stylesheet" href="./stylesheets/app.css" type="text/css">
 
-    <div class="chat__sidebar">
-        <h3>People</h3>
-        <div id="users"></div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+   <title>Socket IO ChatApp</title>
+   <link
+     href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700&display=swap"
+     rel="stylesheet"
+   />
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+   <link rel="stylesheet" href="./stylesheets/app.css" type="text/css">
 
+ </head>
+ <body>
+   <div class="container-fluid">
+     <header class="header">
+       <div class="logo-container">
+         <!-- <img src="./img/doge.png" alt="doge logo" class="logo-img" /> -->
+         <h1 class="logo-text">
+           Chat<span class="logo-highlight">App</span>
+         </h1>
+       </div>
+     </header>
+     <div class="content-container">
+       <div class="active-users-panel" id="active-user-container">
+         <h3 class="panel-title">Active Users:</h3>
+         <div id="users">
+            
+         </div>
+       </div>
+       <div class="video-chat-container">
+         <div class="chat__main">
+            <ol id="messages" class="chat__messages"></ol>
+            <div class="chat__footer"></div>
+        </div>
+      </div>
+              <h2 class="talk-info" id="talking-with-info"> 
+                Select active user on the left menu.
+              </h2>
+                <video autoplay class="remote-video" id="remote-video"></video>
+                <video autoplay muted class="local-video" id="local-video"></video>
+              
+            
+              
+        
+       
+     </div>
+   </div>
 
-    <div class="chat__main">
-        <ol id="messages" class="chat__messages"></ol>
-        <div class="chat__footer"></div>
-        <form id="msf-form" action="">
-            <input autocomplete="off" type="text" name="message" placeholder="message" /><button id="submit-btn" type="submit">Submit</button>
+   <!-- <div class="newsletter-subscribe"> -->
+    <!-- <div class="container"> -->
+        <div class="row">
+        <form id="msf-form" class="form-group fixed-bottom" action="">
+            <div class="col-md-6 col-sm-6">
+                <input autocomplete="off" class="form-control form-append" type="text" name="message" placeholder="message" />
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <button class="btn btn-primary" id="submit-btn" type="submit">Submit</button>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <button type="button" class="btn btn-default"  id="send-location">Send Location</button>
+            </div>
         </form>
-        <button type="button" id="send-location">Send Location</button>
     </div>
+    <!-- </div> -->
+   <!-- </div> -->
 
 
 
 
-
-    <script id="message-temp" type="text/template">
-        <!-- <li class='message'> -->
-            <div class='message__title'>
-                <h4><%= from %> <%= createdAt %>  </h4>
-                <!-- <h4>{{from}} {{createdAt}}</h4> -->
-                <!-- <span>{{createdAt}}</span> -->
-            </div>
-            <div class="message__body">
-                <p><%= text %> </p>
-                <!-- <p>{{text}}</p> -->
-            </div>
-        <!-- </li> -->
+   <!-- <script src="./scripts/index.js"></script> -->
+   <script id="message-temp" type="text/template">
+    <!-- <li class='message'> -->
+        <div class='message__title'>
+            <h4><%= from %> <%= createdAt %>  </h4>
+            <!-- <h4>{{from}} {{createdAt}}</h4> -->
+            <!-- <span>{{createdAt}}</span> -->
+        </div>
+        <div class="message__body">
+            <p><%= text %> </p>
+            <!-- <p>{{text}}</p> -->
+        </div>
+    <!-- </li> -->
     </script>
 
-    <script id="location-message-temp" type="text/template">
-        <!-- <li class='message'> -->
-            <div class='message__title'>
-                <h4><%= from %> <%= createdAt %>  </h4>
-                <!-- <h4>{{from}} {{createdAt}}</h4> -->
-                <!-- <span>{{createdAt}}</span> -->
-            </div>
-            <div class="message__body">
-                <a href="<%= url %>"  target='_blank'>My Current Location</a>
-            </div>
-        <!-- </li> -->
-    </script>
+<script id="location-message-temp" type="text/template">
+    <!-- <li class='message'> -->
+        <div class='message__title'>
+            <h4><%= from %> <%= createdAt %>  </h4>
+            <!-- <h4>{{from}} {{createdAt}}</h4> -->
+            <!-- <span>{{createdAt}}</span> -->
+        </div>
+        <div class="message__body">
+            <a href="<%= url %>"  target='_blank'>My Current Location</a>
+        </div>
+    <!-- </li> -->
+</script>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/index.js"></script>
-    <script src="js/libs/moment.js"></script>
-    <script src="js/libs/ejs.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/index.js"></script>
+<script src="js/libs/moment.js"></script>
+<script src="js/libs/ejs.js"></script>
 </body>
 </html>
+
+

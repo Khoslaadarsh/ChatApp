@@ -1,0 +1,57 @@
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3" id="joined-person-list">
+            <h1>People</h1>
+        </div>
+        <div class="col-md-9">
+            <div class="chat__main">
+                <ol id="messages" class="chat__messages"></ol>
+                <div class="chat__footer"></div>
+                <form id="msf-form" action="">
+                    <input autocomplete="off" type="text" name="message" placeholder="message" /><button id="submit-btn" type="submit">Submit</button>
+                </form>
+                <button type="button" id="send-location">Send Location</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script id="message-temp" type="text/template">
+    <!-- <li class='message'> -->
+        <div class='message__title'>
+            <h4><%= from %> <%= createdAt %>  </h4>
+            <!-- <h4>{{from}} {{createdAt}}</h4> -->
+            <!-- <span>{{createdAt}}</span> -->
+        </div>
+        <div class="message__body">
+            <p><%= text %> </p>
+            <!-- <p>{{text}}</p> -->
+        </div>
+    <!-- </li> -->
+</script>
+
+<script id="location-message-temp" type="text/template">
+    <!-- <li class='message'> -->
+        <div class='message__title'>
+            <h4><%= from %> <%= createdAt %>  </h4>
+            <!-- <h4>{{from}} {{createdAt}}</h4> -->
+            <!-- <span>{{createdAt}}</span> -->
+        </div>
+        <div class="message__body">
+            <a href="<%= url %>"  target='_blank'>My Current Location</a>
+        </div>
+    <!-- </li> -->
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/index.js"></script>
+<script src="js/libs/moment.js"></script>
+<script src="js/libs/ejs.js"></script>
+</body>
+</html>
