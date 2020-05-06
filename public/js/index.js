@@ -252,7 +252,7 @@ socket.on('updateUsersList', function(users){
                 navigator.mediaDevices.getUserMedia(mediaConstraints)
                 .then(function(localStream){
                     document.getElementById('local-video').srcObject = localStream;
-                    localStream.getTracks().forEach(track => myPerConnection.addTrack(track, localStream));
+                    localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
                 })
                 .catch(handleGetUserMediaError);
             }
