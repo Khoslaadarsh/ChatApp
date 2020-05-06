@@ -1,5 +1,6 @@
 let socket = io();
 var params = null;
+var targetUsername =null;
 var myPeerConnection = null;
 var mediaConstraints = {
     audio: true, // We want an audio track
@@ -54,7 +55,7 @@ socket.on('updateUsersList', function(users){
                   return;
               }
 
-              var targetUserName = clickedUsername;
+              targetUsername = clickedUsername;
               createPeerConnection();
 
               navigator.mediaDevices.getUserMedia(mediaConstraints)
@@ -115,7 +116,11 @@ function createPeerConnection() {
 
 
 function reportError() {  
-    alert('something wrong');
+    console.log('something wrong');
+}
+ 
+function reportError1() {  
+    console.log('something wrong from one');
 }
  
 
@@ -147,6 +152,8 @@ function handleNegotiationNeededEvent() {
             type: "video-offer",
             sdp: myPeerConnection.localDescription
         })
+        console.log(targetUsername);
+        
     //   sendToServer({
     //     name: myUsername,
     //     target: targetUsername,
@@ -210,7 +217,7 @@ function handleNegotiationNeededEvent() {
     var candidate = new RTCIceCandidate(msg.candidate);
   
     myPeerConnection.addIceCandidate(candidate)
-      .catch(reportError);
+      .catch(reportError1);
   }
 
 

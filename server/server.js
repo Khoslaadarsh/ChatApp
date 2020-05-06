@@ -42,12 +42,11 @@ io.on('connection', (socket)=>{
 
     socket.on('video-offer', (msg)=>{
         var ID = null;
-        users.forEach(element=> {
-            if(element.name === msg.name){
+        // alert(msg.name);
+        users.users.forEach(element=> {
+            if(element.name === msg.target){
                 ID = element.id;
             }
-            console.log(element);
-            console.log(msg);
         });
         socket.broadcast.to(ID).emit('video-offer', msg);
     })
