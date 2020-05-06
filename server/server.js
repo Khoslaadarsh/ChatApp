@@ -40,6 +40,17 @@ io.on('connection', (socket)=>{
         callback();
     })
 
+    socket.on('video-offer', (msg)=>{
+        var ID = null;
+        users.forEach(element=> {
+            if(element.name === msg.name){
+                ID = element.id;
+            }
+            console.log(element);
+            console.log(msg);
+        });
+        socket.broadcast.to(ID).emit('video-offer', msg);
+    })
 
     socket.on('createMessage', (msg)=>{
         let user = users.getUser(socket.id);
