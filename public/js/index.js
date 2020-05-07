@@ -178,7 +178,8 @@ function handleNegotiationNeededEvent() {
     })
     .then(function(stream) {
       localStream = stream;
-      document.getElementById("local_video").srcObject = localStream;
+      console.log(localStream);
+      document.getElementById("local-video").srcObject = localStream;
   
       localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
     })
@@ -190,20 +191,28 @@ function handleNegotiationNeededEvent() {
     })
     .then(function() {
       var msg = {
-        name: myUsername,
+        name: params.name,
         target: targetUsername,
         type: "video-answer",
         sdp: myPeerConnection.localDescription
       };
   
-      sendToServer(msg);
+      socket.emit('video-answer', msg);
     })
     .catch(handleGetUserMediaError);
   })
 
+  function sendToServer(msg) {
+    var msgJSON = JSON.stringify(msg);
+  
+    connection.send(msgJSON);
+  }
   
   function handleICECandidateEvent(event) {
     if (event.candidate) {
+        // socket.emit('new-ice-candidate', {
+            
+        // })
       sendToServer({
         type: "new-ice-candidate",
         target: targetUsername,

@@ -48,7 +48,20 @@ io.on('connection', (socket)=>{
                 ID = element.id;
             }
         });
+        console.log(msg.target);
         socket.broadcast.to(ID).emit('video-offer', msg);
+    })
+
+    socket.on('video-answer', msg=>{
+        var ID = null;
+        // alert(msg.name);
+        users.users.forEach(element=> {
+            if(element.name === msg.target){
+                ID = element.id;
+            }
+        });
+        console.log(msg.target);
+        socket.broadcast.to(ID).emit('video-answer', msg);
     })
 
     socket.on('createMessage', (msg)=>{
