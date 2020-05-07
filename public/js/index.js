@@ -110,7 +110,7 @@ function createPeerConnection() {
     myPeerConnection.onicecandidate = handleICECandidateEvent;
     myPeerConnection.ontrack = handleTrackEvent;
     myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
-    myPeerConnection.onremovetrack = handleRemoveTrackEvent;
+    // myPeerConnection.onremovetrack = handleRemoveTrackEvent;
     myPeerConnection.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
     myPeerConnection.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
     myPeerConnection.onsignalingstatechange = handleSignalingStateChangeEvent;
@@ -219,13 +219,12 @@ function handleNegotiationNeededEvent() {
   }
 
 
-  function handleNewICECandidateMsg(msg) {
+  socket.on('handleNewICECandidateMsg',(msg) =>{
     var candidate = new RTCIceCandidate(msg.candidate);
   
     myPeerConnection.addIceCandidate(candidate)
       .catch(reportError1);
-  }
-
+  })
 
 
 
@@ -235,9 +234,7 @@ function handleNegotiationNeededEvent() {
 
 
 function handleTrackEvent(event) {
-    event.streams[0].active = true;
     document.getElementById("remote-video").srcObject = event.streams[0];
-    console.log(document.getElementById("remote-video").srcObject);
     document.getElementById("hangup-button").disabled = false;
   }
 
@@ -246,14 +243,14 @@ function handleTrackEvent(event) {
 
 
 function handleRemoveTrackEvent(event) {
-    var stream = document.getElementById("remote-video").srcObject;
-    // console.log(stream);
+    // var stream = document.getElementById("remote-video").srcObject;
+    // // console.log(stream);
     
-    var trackList = stream.getTracks();
+    // var trackList = stream.getTracks();
    
-    if (trackList.length == 0) {
-      closeVideoCall();
-    }
+    // if (trackList.length == 0) {
+    //   closeVideoCall();
+    // }
   }
 
 
@@ -263,67 +260,67 @@ function handleRemoveTrackEvent(event) {
 // ENDING CALL
   
 function hangUpCall() {
-    closeVideoCall();
-    sendToServer({
-      name: myUsername,
-      target: targetUsername,
-      type: "hang-up"
-    });
+    // closeVideoCall();
+    // sendToServer({
+    //   name: myUsername,
+    //   target: targetUsername,
+    //   type: "hang-up"
+    // });
   }
 
 
 
 function closeVideoCall() {
-    var remoteVideo = document.getElementById("remote-video");
-    var localVideo = document.getElementById("local-video");
+    // var remoteVideo = document.getElementById("remote-video");
+    // var localVideo = document.getElementById("local-video");
   
-    if (myPeerConnection) {
-      myPeerConnection.ontrack = null;
-      myPeerConnection.onremovetrack = null;
-      myPeerConnection.onremovestream = null;
-      myPeerConnection.onicecandidate = null;
-      myPeerConnection.oniceconnectionstatechange = null;
-      myPeerConnection.onsignalingstatechange = null;
-      myPeerConnection.onicegatheringstatechange = null;
-      myPeerConnection.onnegotiationneeded = null;
+    // if (myPeerConnection) {
+    //   myPeerConnection.ontrack = null;
+    //   myPeerConnection.onremovetrack = null;
+    //   myPeerConnection.onremovestream = null;
+    //   myPeerConnection.onicecandidate = null;
+    //   myPeerConnection.oniceconnectionstatechange = null;
+    //   myPeerConnection.onsignalingstatechange = null;
+    //   myPeerConnection.onicegatheringstatechange = null;
+    //   myPeerConnection.onnegotiationneeded = null;
   
-      if (remoteVideo.srcObject) {
-        remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-      }
+    //   if (remoteVideo.srcObject) {
+    //     remoteVideo.srcObject.getTracks().forEach(track => track.stop());
+    //   }
   
-      if (localVideo.srcObject) {
-        localVideo.srcObject.getTracks().forEach(track => track.stop());
-      }
+    //   if (localVideo.srcObject) {
+    //     localVideo.srcObject.getTracks().forEach(track => track.stop());
+    //   }
   
-      myPeerConnection.close();
-      myPeerConnection = null;
-    }
+    //   myPeerConnection.close();
+    //   myPeerConnection = null;
+    // }
   
-    remoteVideo.removeAttribute("src");
-    remoteVideo.removeAttribute("srcObject");
-    localVideo.removeAttribute("src");
-    remoteVideo.removeAttribute("srcObject");
+    // remoteVideo.removeAttribute("src");
+    // remoteVideo.removeAttribute("srcObject");
+    // localVideo.removeAttribute("src");
+    // remoteVideo.removeAttribute("srcObject");
   
-    document.getElementById("hangup-button").disabled = true;
-    targetUsername = null;
+    // document.getElementById("hangup-button").disabled = true;
+    // targetUsername = null;
   }
 
   function handleICEConnectionStateChangeEvent(event) {
-    switch(myPeerConnection.iceConnectionState) {
-      case "closed":
-      case "failed":
-      case "disconnected":
-        closeVideoCall();
-        break;
-    }
+    // switch(myPeerConnection.iceConnectionState) {
+    //   case "closed":
+    //   case "failed":
+    //   case "disconnected":
+    //     closeVideoCall();
+    //     break;
+    // }
   }
   
   function handleSignalingStateChangeEvent(event) {
-    switch(myPeerConnection.signalingState) {
-      case "closed":
-        closeVideoCall();
-        break;
-    }
+    // switch(myPeerConnection.signalingState) {
+    //   case "closed":
+    //     closeVideoCall();
+    //     break;
+    // }
   };
 
 

@@ -64,6 +64,17 @@ io.on('connection', (socket)=>{
         socket.broadcast.to(ID).emit('video-answer', msg);
     })
 
+    socket.on('handleICECandidateEvent', event=>{
+        var ID = null;
+        // alert(msg.name);
+        users.users.forEach(element=> {
+            if(element.name === msg.target){
+                ID = element.id;
+            }
+        });
+        socket.broadcast.to(ID).emit('handleNewICECandidateMsg', event);
+    })
+
     socket.on('createMessage', (msg)=>{
         let user = users.getUser(socket.id);
 
