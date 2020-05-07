@@ -61,6 +61,8 @@ socket.on('updateUsersList', function(users){
               navigator.mediaDevices.getUserMedia(mediaConstraints)
               .then(function(localStream){
                   document.getElementById('local-video').srcObject = localStream;
+                  console.log(localStream);
+                //   document.getElementById('remote-video').srcObject = localStream;
                   localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
               })
               .catch(handleGetUserMediaError);
@@ -100,7 +102,7 @@ function createPeerConnection() {
     myPeerConnection = new RTCPeerConnection({
         iceServers: [     // Information about ICE servers - Use your own!
           {
-            urls: "stun:stun1.l.google.com:19302"
+            urls: ["stun:stun1.l.google.com:19302"]
           }
         ]
     });
@@ -122,7 +124,7 @@ function reportError() {
 function reportError1() {  
     console.log('something wrong from one');
 }
- 
+
 
 
 
@@ -152,7 +154,7 @@ function handleNegotiationNeededEvent() {
             type: "video-offer",
             sdp: myPeerConnection.localDescription
         })
-        console.log(targetUsername);
+        // console.log(targetUsername);
         
     //   sendToServer({
     //     name: myUsername,
@@ -167,18 +169,20 @@ function handleNegotiationNeededEvent() {
 
  socket.on('video-offer', (msg)=>{
     var localStream = null;
-  
+    // console.log('hello world');
     targetUsername = msg.name;
     createPeerConnection();
   
     var desc = new RTCSessionDescription(msg.sdp);
-  
+    // console.log('hello world');
+
     myPeerConnection.setRemoteDescription(desc).then(function () {
       return navigator.mediaDevices.getUserMedia(mediaConstraints);
     })
     .then(function(stream) {
       localStream = stream;
-      console.log(localStream);
+      console.log('localStream');
+    //   document.getElementById("remote-video").srcObject = localStream;
       document.getElementById("local-video").srcObject = localStream;
   
       localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
@@ -202,22 +206,15 @@ function handleNegotiationNeededEvent() {
     .catch(handleGetUserMediaError);
   })
 
-  function sendToServer(msg) {
-    var msgJSON = JSON.stringify(msg);
-  
-    connection.send(msgJSON);
-  }
+
   
   function handleICECandidateEvent(event) {
     if (event.candidate) {
-        // socket.emit('new-ice-candidate', {
-            
-        // })
-      sendToServer({
-        type: "new-ice-candidate",
-        target: targetUsername,
-        candidate: event.candidate
-      });
+        socket.emit('new-ice-candidate', {
+            type: "new-ice-candidate",
+            target: targetUsername,
+            candidate: event.candidate
+        })
     }
   }
 
@@ -238,7 +235,9 @@ function handleNegotiationNeededEvent() {
 
 
 function handleTrackEvent(event) {
+    event.streams[0].active = true;
     document.getElementById("remote-video").srcObject = event.streams[0];
+    console.log(document.getElementById("remote-video").srcObject);
     document.getElementById("hangup-button").disabled = false;
   }
 
@@ -248,6 +247,8 @@ function handleTrackEvent(event) {
 
 function handleRemoveTrackEvent(event) {
     var stream = document.getElementById("remote-video").srcObject;
+    // console.log(stream);
+    
     var trackList = stream.getTracks();
    
     if (trackList.length == 0) {
@@ -328,7 +329,7 @@ function closeVideoCall() {
 
   function handleICEGatheringStateChangeEvent(event) {
     // Our sample just logs information to console here,
-    console.log(event);
+    // console.log(event);
     
     // but you can do whatever you need.
   }
