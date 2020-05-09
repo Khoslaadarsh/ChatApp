@@ -64,15 +64,15 @@ io.on('connection', (socket)=>{
         socket.broadcast.to(ID).emit('video-answer', msg);
     })
 
-    socket.on('handleICECandidateEvent', event=>{
+    socket.on('new-ice-candidate', event=>{
         var ID = null;
         // alert(msg.name);
         users.users.forEach(element=> {
-            if(element.name === msg.target){
+            if(element.name === event.target){
                 ID = element.id;
             }
         });
-        socket.broadcast.to(ID).emit('handleNewICECandidateMsg', event);
+        socket.broadcast.to(ID).emit('new-ice-candidate', event);
     })
 
     socket.on('createMessage', (msg)=>{
