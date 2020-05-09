@@ -48,7 +48,8 @@ io.on('connection', (socket)=>{
                 ID = element.id;
             }
         });
-        console.log(msg.target);
+        // console.log('sdp');
+        // console.log(msg);
         socket.broadcast.to(ID).emit('video-offer', msg);
     })
 
@@ -60,7 +61,6 @@ io.on('connection', (socket)=>{
                 ID = element.id;
             }
         });
-        console.log(msg.target);
         socket.broadcast.to(ID).emit('video-answer', msg);
     })
 

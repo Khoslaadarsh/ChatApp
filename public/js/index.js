@@ -6,6 +6,10 @@ var mediaConstraints = {
     audio: true, // We want an audio track
     video: true // ...and we want a video track
 };
+function scrolToBottom() {  
+    let messages = document.querySelector('#messages').lastElementChild;
+    messages.scrollIntoView();
+}
 
 socket.on('connect', ()=>{
     var param = window.location.search.substring(1);
@@ -70,12 +74,10 @@ socket.on('updateUsersList', function(users){
   
 })
 
-function scrolToBottom() {  
-    let messages = document.querySelector('#messages').lastElementChild;
-    messages.scrollIntoView();
-}
 
 
+
+// Handling getUserMedia() errors
 function handleGetUserMediaError(e) {
     switch(e.name) {
       case "NotFoundError":
@@ -95,6 +97,7 @@ function handleGetUserMediaError(e) {
   }
 
 
+// Creating peer connection
 function createPeerConnection() {
     myPeerConnection = new RTCPeerConnection({
         iceServers: [     // Information about ICE servers - Use your own!
@@ -140,7 +143,7 @@ function reportError() {
   
 // NEGOTIATION
 
-
+// handleNegotiationNeededEvent
 function handleNegotiationNeededEvent() {
     console.log('myPeerConnection-> at handleNegotiationNeededEvent:  ');
     console.log(myPeerConnection);
@@ -158,6 +161,7 @@ function handleNegotiationNeededEvent() {
     .catch(reportError);
   }
   
+// Handling the invitation
   socket.on('video-offer', (msg)=>{
     console.log('Recieved video-offer');
     console.log(msg);
@@ -165,18 +169,25 @@ function handleNegotiationNeededEvent() {
     var localStream = null;
     targetUsername = msg.name
     createPeerConnection();
+    
+    // msg.sdp.sdp += '\n';
 
-    var desc = new RTCPeerConnection(msg.sdp);
 
-    myPeerConnection.setRemoteDescription(desc)
-        .then(function () {  
-            return navigator.mediaDevices.getUserMedia(mediaConstraints);
-        })
+
+    var desc = new RTCSessionDescription(msg.sdp);
+
+    myPeerConnection.setRemoteDescription(desc).then(function () {
+        console.log('Getting remote media devices')
+        return navigator.mediaDevices.getUserMedia(mediaConstraints);
+      })
         .then(function (stream) {  
             localStream = stream;
+            console.log('LOCAL STREAM FROM INVITE');
+            
+            console.log(localStream);
             document.getElementById('local-video').srcObject = localStream;
 
-            localStream.getTracks().forEach(trcak => myPeerConnection.addTrack(track, localStream));
+            localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
         })
         .then(function () {  
             return myPeerConnection.createAnswer();
@@ -188,6 +199,7 @@ function handleNegotiationNeededEvent() {
                 type: 'video-answer',
                 sdp: myPeerConnection.localDescription
             };
+            
 
             socket.emit('video-answer', msg);
         })
@@ -195,26 +207,30 @@ function handleNegotiationNeededEvent() {
 
 })
 
-  
+
   function handleICECandidateEvent(event) {
+      console.log('myPeerConnection from handleICECandidateEvent')
+      console.log(myPeerConnection)
+    //  MyPeerConnection = myPeerConnection;
     if (event.candidate) {
         socket.emit('new-ice-candidate', {
             type: "new-ice-candidate",
             target: targetUsername,
-            candidate: event.candidate
+            candidate: event.candidate,
+            myPeerConnection: myPeerConnection
         })
     }
+    // socket.on('new-ice-candidate', msg=>{
+    //     console.log('recieved newIce Candidate');
+    //     console.log(msg);
+        
+    //     var candidate = new RTCIceCandidate(msg.candidate);
+    
+    //     myPeerConnection.addIceCandidate(candidate)
+    //         .catch(reportError);
+    // })
   }
 
-  socket.on('new-ice-candidate', msg=>{
-    console.log('recieved newIce Candidate');
-    console.log(msg);
-    
-    var candidate = new RTCIceCandidate(msg.candidate);
-
-    myPeerConnection.addIceCandidate(candidate)
-        .catch(reportError);
-})
 
 //   socket.on('handleNewICECandidateMsg',(msg) =>{
 //     var candidate = new RTCIceCandidate(msg.candidate);
@@ -230,14 +246,37 @@ socket.on('video-answer', (msg)=>{
 });
 
 
+socket.on('new-ice-candidate', msg=>{
+    console.log('recieved newIce Candidate');
+    console.log(myPeerConnection);
+    
+    var candidate = new RTCIceCandidate(msg.candidate);
+
+    myPeerConnection.addIceCandidate(candidate)
+        .catch(reportError);
+})
+
 // ==============================================
 
 
 
 function handleTrackEvent(event) {
-    console.log('settingup REMOTE video');
+    console.log("LOREM IPSUM:");
     console.log(event.streams[0]);
-    document.getElementById("remote-video").srcObject = event.streams[0];
+    document.getElementById('local-video').srcObject= null;
+    console.log('SRC of local-video');
+    console.log(document.getElementById('local-video').srcObject);
+    
+    var video1 = document.getElementById("local-video");
+    video1.srcObject = event.streams[0];
+    console.log('SRC of local-video');
+    console.log(document.getElementById('local-video').srcObject);
+    video1.onloadedmetadata = function(e) {
+        console.log('ERROR');
+        
+        console.log(e);
+        video1.play();
+      };
     document.getElementById("hangup-button").disabled = false;
   }
 
