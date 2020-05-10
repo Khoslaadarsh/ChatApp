@@ -111,6 +111,10 @@ function createPeerConnection() {
     myPeerConnection.ontrack = handleTrackEvent;
     myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
     myPeerConnection.onremovetrack = handleRemoveTrackEvent;
+    myPeerConnection.onconnectionstatechange = ()=>{
+        console.log('CONNECTION ESTABLISHED....................................................................');
+        
+    }
     myPeerConnection.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
     myPeerConnection.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
     myPeerConnection.onsignalingstatechange = handleSignalingStateChangeEvent;
@@ -147,10 +151,27 @@ function reportError() {
 function handleNegotiationNeededEvent() {
     console.log('myPeerConnection-> at handleNegotiationNeededEvent:  ');
     console.log(myPeerConnection);
+
+
+    socket.on('video-answer', async msg=>{
+        if(msg.type){
+            console.log('recieving video-answer');
+            console.log(msg);
+            
+            const remoteDesc = new RTCSessionDescription(msg.sdp);
+            await myPeerConnection.setRemoteDescription(remoteDesc);
+        }
+        
+    });
+    
+
+
+
     myPeerConnection.createOffer().then(function(offer) {
       return myPeerConnection.setLocalDescription(offer);
     })
     .then(function() {
+        console.log('1.sending video-offer');
         socket.emit('video-offer', {
             name: params.name,
             target: targetUsername,
@@ -163,12 +184,14 @@ function handleNegotiationNeededEvent() {
   
 // Handling the invitation
   socket.on('video-offer', (msg)=>{
-    console.log('Recieved video-offer');
-    console.log(msg);
+    console.log('2. Recieved video-offer');
     
     var localStream = null;
     targetUsername = msg.name
     createPeerConnection();
+    console.log('3. created peer connection on callee side: ');
+    console.log();
+    
     
     // msg.sdp.sdp += '\n';
 
@@ -182,9 +205,6 @@ function handleNegotiationNeededEvent() {
       })
         .then(function (stream) {  
             localStream = stream;
-            console.log('LOCAL STREAM FROM INVITE');
-            
-            console.log(localStream);
             document.getElementById('local-video').srcObject = localStream;
 
             localStream.getTracks().forEach(track => myPeerConnection.addTrack(track, localStream));
@@ -192,13 +212,15 @@ function handleNegotiationNeededEvent() {
         .then(function () {  
             return myPeerConnection.createAnswer();
         })
-        .then(function () {  
+        .then(function (answer) {  
+            myPeerConnection.setLocalDescription(answer);
             var msg = {
                 name: params.name,
                 target: targetUsername,
                 type: 'video-answer',
                 sdp: myPeerConnection.localDescription
             };
+            console.log('video-answer mypeer connection');
             
 
             socket.emit('video-answer', msg);
@@ -239,11 +261,6 @@ function handleNegotiationNeededEvent() {
 //       .catch(reportError1);
 //   })
 
-socket.on('video-answer', (msg)=>{
-    console.log('Answer recived : ');
-    console.log(msg);
-    
-});
 
 
 socket.on('new-ice-candidate', msg=>{
@@ -261,22 +278,9 @@ socket.on('new-ice-candidate', msg=>{
 
 
 function handleTrackEvent(event) {
-    console.log("LOREM IPSUM:");
+    console.log('settingup REMOTE video');
     console.log(event.streams[0]);
-    document.getElementById('local-video').srcObject= null;
-    console.log('SRC of local-video');
-    console.log(document.getElementById('local-video').srcObject);
-    
-    var video1 = document.getElementById("local-video");
-    video1.srcObject = event.streams[0];
-    console.log('SRC of local-video');
-    console.log(document.getElementById('local-video').srcObject);
-    video1.onloadedmetadata = function(e) {
-        console.log('ERROR');
-        
-        console.log(e);
-        video1.play();
-      };
+    document.getElementById("remote-video").srcObject = event.streams[0];
     document.getElementById("hangup-button").disabled = false;
   }
 
