@@ -6,7 +6,7 @@ var mediaConstraints = {
     audio: true, // We want an audio track
     video: true // ...and we want a video track
 };
-function scrolToBottom() {  
+function scrolToBottom() {
     let messages = document.querySelector('#messages').lastElementChild;
     messages.scrollIntoView();
 }
