@@ -45,14 +45,11 @@
           <video autoplay class="remote-video" id="remote-video"></video>
           <button class="btn btn-default" id="hangup-button">HangUp</button>
           <video autoplay muted class="local-video" id="local-video"></video>
-          <!-- <video autoplay muted class="local-video" id="local123-video"></video> -->
       </div>
               
      </div>
    </div>
 
-   <!-- <div class="newsletter-subscribe"> -->
-    <!-- <div class="container"> -->
         <div class="row">
         <form id="msf-form" class="form-group fixed-bottom" action="">
             <div class="col-md-6 col-sm-6">
@@ -66,44 +63,34 @@
             </div>
         </form>
     </div>
-    <!-- </div> -->
-   <!-- </div> -->
 
 
 
 
-   <!-- <script src="./scripts/index.js"></script> -->
-   <script id="message-temp" type="text/template">
-    <!-- <li class='message'> -->
+
+  <script id="message-temp" type="text/template">
         <div class='message__title'>
             <h6><%= from %></h6>
-            <!-- <h4>{{from}} {{createdAt}}</h4> -->
-            <!-- <span>{{createdAt}}</span> -->
         </div>
         <div class="message__body">
             <p><strong><%= text %> </strong></p>
             <h6><em><%= createdAt %></em></h6>
             <hr>
-            <!-- <p>{{text}}</p> -->
         </div>
-    <!-- </li> -->
-    </script>
+  </script>
 
 <script id="location-message-temp" type="text/template">
-    <!-- <li class='message'> -->
         <div class='message__title'>
             <h4><%= from %> <%= createdAt %>  </h4>
-            <!-- <h4>{{from}} {{createdAt}}</h4> -->
-            <!-- <span>{{createdAt}}</span> -->
         </div>
         <div class="message__body">
             <a href="<%= url %>"  target='_blank'>My Current Location</a>
         </div>
-    <!-- </li> -->
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter_no_edge_no_global.js"></script>
 <script src="js/libs/moment.js"></script>
+<script src="js/rtcPeer.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/index.js"></script>
 <script src="js/libs/ejs.js"></script>
